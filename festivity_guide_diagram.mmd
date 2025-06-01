@@ -1,0 +1,83 @@
+graph TD
+    Start([Festivity Begins]) --> Check{Check Requirements}
+    
+    Check -->|"2+ cards<br/>(3+ in 2p)"| Take[Take Candelabra<br/>Become Runner]
+    Check -->|Not enough| End([Cannot Throw])
+    
+    Take --> Round1[Round 1]
+    
+    Round1 --> Rev1[Reveal Community Card]
+    Rev1 -->|If Rogue| Roll1[Roll D10 for value]
+    Rev1 -->|Other| Play1[Players take turns]
+    Roll1 --> Play1
+    
+    Play1 --> Turn1{Each Player's Turn}
+    Turn1 -->|Runner| Must1[MUST play 1 card]
+    Turn1 -->|Others| Choice1[Play 1 card OR Pass]
+    
+    Must1 -->|If Rogue| Set1[Set D10 value 0-9]
+    Choice1 -->|If Rogue| Set1
+    Must1 -->|Other card| Next1[Next player]
+    Choice1 -->|Other/Pass| Next1
+    Set1 --> Next1
+    
+    Next1 -->|More players| Turn1
+    Next1 -->|Round done| Round2[Round 2]
+    
+    Round2 --> Rev2[Reveal Community Card]
+    Rev2 -->|"Same process<br/>as Round 1"| AfterCards{After Cards Played}
+    
+    AfterCards -->|Bottle of Gin?| Extra[Extra Round for All]
+    AfterCards -->|No Gin| BeforeSelect{Before Selecting}
+    Extra --> BeforeSelect
+    
+    BeforeSelect -->|Violin?| Draw2[Draw 2 Extra<br/>Community Cards]
+    BeforeSelect -->|No Violin| Select[Select Best Set<br/>4 cards]
+    Draw2 --> Select
+    
+    Select --> Rank{Rank Sets<br/>Highest to Lowest}
+    
+    Rank -->|1st| SB[Surprise Ball<br/>4 same suit sequential]
+    Rank -->|2nd| Chr[Christening<br/>Q + 3 same value]
+    Rank -->|3rd| Dan[Dance<br/>J + 3 sequential]
+    Rank -->|4th| QG[Quiet Gathering<br/>4 lowest, C=0]
+    
+    SB --> Score[Score Selected Cards]
+    Chr --> Score
+    Dan --> Score
+    QG --> Score
+    
+    Score --> AddRep[Add to Reputation]
+    AddRep --> ScoreJoy[Score Joy + Bonuses]
+    
+    ScoreJoy --> Foil{Threats in Set?}
+    Foil -->|Yes| FoilThreat[Move to Safe Pile<br/>Pride Rule: May take cubes]
+    Foil -->|No| Gossip
+    FoilThreat --> Gossip[Generate Gossip]
+    
+    Gossip --> AddGossip[Add remaining cards<br/>to gossip one by one]
+    AddGossip --> DrawCheck{Player's card?}
+    DrawCheck -->|Yes| DrawCard[Player draws 1]
+    DrawCheck -->|No| CheckThreat{Is it a threat?}
+    DrawCard --> CheckThreat
+    
+    CheckThreat -->|Yes| Expose[EXPOSE player<br/>Mandatory cubes]
+    CheckThreat -->|No| NextGossip{More cards?}
+    Expose --> NextGossip
+    
+    NextGossip -->|Yes| AddGossip
+    NextGossip -->|No| Bonus[Score Bonuses]
+    
+    Bonus --> RunnerBonus[Runner: ±Joy = reputation]
+    RunnerBonus --> CommBonus[Community: +3/+2/+1/-1]
+    CommBonus --> End2([Festivity Complete])
+    
+    style Start fill:#f9f,stroke:#333,stroke-width:4px
+    style End fill:#f9f,stroke:#333,stroke-width:4px
+    style End2 fill:#f9f,stroke:#333,stroke-width:4px
+    style FoilThreat fill:#90EE90,stroke:#333,stroke-width:2px
+    style Expose fill:#FFA07A,stroke:#333,stroke-width:2px
+    style SB fill:#FFD700,stroke:#333,stroke-width:2px
+    style Chr fill:#87CEEB,stroke:#333,stroke-width:2px
+    style Dan fill:#DDA0DD,stroke:#333,stroke-width:2px
+    style QG fill:#F0E68C,stroke:#333,stroke-width:2px

@@ -1,0 +1,32 @@
+flowchart TD
+    A[Threat Appears] --> B{Context of Appearance?}
+    
+    B -->|Festivity| C{Scored in Winning Set?}
+    C -->|Yes| C1[SAFE - Foiled]
+    C1 --> C2[Pride Rule:<br/>May take cubes]
+    
+    C -->|No| D{Played by Community?}
+    D -->|Yes| D1[GOSSIP<br/>EXPOSE ALL PLAYERS]
+    D -->|No| D2[GOSSIP<br/>EXPOSE PLAYER]
+    
+    B -->|Market Discard| E[GOSSIP<br/>EXPOSE MOST INFAMOUS]
+    
+    B -->|End of Turn| F{Player is<br/>Revealed Informer?}
+    F -->|Yes| F1[SAFE - No Exposure]
+    F -->|No| F2[GOSSIP - No Exposure]
+    
+    B -->|End of Week| G[GOSSIP<br/>EXPOSE PLAYERS]
+    
+    style A fill:#B22222,stroke:#2F2F2F,stroke-width:3px,color:#fff
+    style B fill:#FFE4D5,stroke:#8B1538,stroke-width:2px,color:#2F2F2F
+    style C fill:#FFE4D5,stroke:#8B1538,stroke-width:2px,color:#2F2F2F
+    style D fill:#FFE4D5,stroke:#8B1538,stroke-width:2px,color:#2F2F2F
+    style F fill:#FFE4D5,stroke:#8B1538,stroke-width:2px,color:#2F2F2F
+    style C1 fill:#228B22,stroke:#2F2F2F,stroke-width:2px,color:#fff
+    style C2 fill:#90EE90,stroke:#228B22,stroke-width:2px,color:#2F2F2F
+    style F1 fill:#228B22,stroke:#2F2F2F,stroke-width:2px,color:#fff
+    style D1 fill:#FF8C00,stroke:#B22222,stroke-width:3px,color:#fff
+    style D2 fill:#FF8C00,stroke:#B22222,stroke-width:2px,color:#fff
+    style E fill:#FF8C00,stroke:#B22222,stroke-width:2px,color:#fff
+    style F2 fill:#FFE4D5,stroke:#FF8C00,stroke-width:2px,color:#2F2F2F
+    style G fill:#FF8C00,stroke:#B22222,stroke-width:2px,color:#fff
