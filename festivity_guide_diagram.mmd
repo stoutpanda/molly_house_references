@@ -1,83 +1,129 @@
-graph TD
-    Start([Festivity Begins]) --> Check{Check Requirements}
+flowchart TD
+    Start["Runner takes Festivity<br/>requirement: 6 Cards"]
     
-    Check -->|"2+ cards<br/>(3+ in 2p)"| Take[Take Candelabra<br/>Become Runner]
-    Check -->|Not enough| End([Cannot Throw])
+    Start --> Players["Play from 3 Players<br/>1-2 Cards each"]
     
-    Take --> Round1[Round 1]
+    Players --> Runner["Runner"]
     
-    Round1 --> Rev1[Reveal Community Card]
-    Rev1 -->|If Rogue| Roll1[Roll D10 for value]
-    Rev1 -->|Other| Play1[Players take turns]
-    Roll1 --> Play1
+    Runner --> RunnerPlay{{"Does Runner have cards<br/>of Risque that Site?"}}
     
-    Play1 --> Turn1{Each Player's Turn}
-    Turn1 -->|Runner| Must1[MUST play 1 card]
-    Turn1 -->|Others| Choice1[Play 1 card OR Pass]
+    RunnerPlay -->|Yes| PlayCards["Players take turns<br/>Starting with Runner"]
+    RunnerPlay -->|No| SkipRunner["Skip Runner's turn"]
     
-    Must1 -->|If Rogue| Set1[Set D10 value 0-9]
-    Choice1 -->|If Rogue| Set1
-    Must1 -->|Other card| Next1[Next player]
-    Choice1 -->|Other/Pass| Next1
-    Set1 --> Next1
+    PlayCards --> PlayerChoice{{"Playing Desire?"}}
+    SkipRunner --> PlayerChoice
     
-    Next1 -->|More players| Turn1
-    Next1 -->|Round done| Round2[Round 2]
+    PlayerChoice -->|Yes| PlaceDesire["Place Desire on<br/>Risque Site Board"]
+    PlayerChoice -->|No| PassOrPlay
     
-    Round2 --> Rev2[Reveal Community Card]
-    Rev2 -->|"Same process<br/>as Round 1"| AfterCards{After Cards Played}
+    subgraph PassOrPlay["Pass or Play"]
+        PassDecision["Players may Pass<br/>Discard to keep Hand Fresh"]
+    end
     
-    AfterCards -->|Bottle of Gin?| Extra[Extra Round for All]
-    AfterCards -->|No Gin| BeforeSelect{Before Selecting}
-    Extra --> BeforeSelect
+    PlaceDesire --> DrawCard["Top of Deck<br/>becomes Community card"]
+    PassOrPlay --> DrawCard
     
-    BeforeSelect -->|Violin?| Draw2[Draw 2 Extra<br/>Community Cards]
-    BeforeSelect -->|No Violin| Select[Select Best Set<br/>4 cards]
-    Draw2 --> Select
+    DrawCard --> FillSixCards{{"All 6 spaces<br/>filled?"}}
     
-    Select --> Rank{Rank Sets<br/>Highest to Lowest}
+    FillSixCards -->|No| MorePlayers{{"More Players?"}}
+    FillSixCards -->|Yes| EndFestivity
     
-    Rank -->|1st| SB[Surprise Ball<br/>4 same suit sequential]
-    Rank -->|2nd| Chr[Christening<br/>Q + 3 same value]
-    Rank -->|3rd| Dan[Dance<br/>J + 3 sequential]
-    Rank -->|4th| QG[Quiet Gathering<br/>4 lowest, C=0]
+    MorePlayers -->|Yes| PlayerChoice
+    MorePlayers -->|No| BackToRunner["Back to<br/>Runner"]
     
-    SB --> Score[Score Selected Cards]
-    Chr --> Score
-    Dan --> Score
-    QG --> Score
+    BackToRunner --> PlayerChoice
     
-    Score --> AddRep[Add to Reputation]
-    AddRep --> ScoreJoy[Score Joy + Bonuses]
+    subgraph EndFestivity["End Festivity"]
+        Select4Best["4 STAR REVIEW<br/>Winning Cards<br/>Select Best 4 by Star Value<br/>May keep Mollies"]
+        
+        Select4Best --> Threat{{"Contains<br/>Threat?"}}
+        
+        Threat -->|Yes| ThreatResolution
+        Threat -->|No| SafeResolution
+    end
     
-    ScoreJoy --> Foil{Threats in Set?}
-    Foil -->|Yes| FoilThreat[Move to Safe Pile<br/>Pride Rule: May take cubes]
-    Foil -->|No| Gossip
-    FoilThreat --> Gossip[Generate Gossip]
+    subgraph ThreatResolution["SAFE Event<br/>Community Cards"]
+        SafeEvent["SAFE Event<br/>Community Cards"]
+        
+        SafeEvent --> RemainderToGossip["Other than Set<br/>all to Gossip<br/>Add if Contains matching threat"]
+    end
     
-    Gossip --> AddGossip[Add remaining cards<br/>to gossip one by one]
-    AddGossip --> DrawCheck{Player's card?}
-    DrawCheck -->|Yes| DrawCard[Player draws 1]
-    DrawCheck -->|No| CheckThreat{Is it a threat?}
-    DrawCard --> CheckThreat
+    subgraph SafeResolution["Determine Set Type"]
+        SafeRes["Determine Set Type"]
+        
+        SafeRes --> Surprise["Surprise Ball<br/>4 matching Desires<br/>plus 4 Joy"]
+        SafeRes --> Christening["Christening<br/>3 matching + 1 Molly<br/>plus 3 Joy"]
+        SafeRes --> Dance["Dance<br/>3 matching Desires<br/>plus 1 Joy"]
+        SafeRes --> Quiet["Quiet Gathering<br/>at least 2 matching Desires<br/>plus 0 Joy<br/>Must have 1 Player card"]
+    end
     
-    CheckThreat -->|Yes| Expose[EXPOSE player<br/>Mandatory cubes]
-    CheckThreat -->|No| NextGossip{More cards?}
-    Expose --> NextGossip
+    Surprise --> DrawEliteMasq
+    Christening --> DrawEliteMasq
+    Dance --> DrawEliteMasq
+    Quiet --> DrawEliteMasq
+    RemainderToGossip --> DrawEliteMasq
     
-    NextGossip -->|Yes| AddGossip
-    NextGossip -->|No| Bonus[Score Bonuses]
+    DrawEliteMasq["Draw Winning Cards"]
     
-    Bonus --> RunnerBonus[Runner: ±Joy = reputation]
-    RunnerBonus --> CommBonus[Community: +3/+2/+1/-1]
-    CommBonus --> End2([Festivity Complete])
+    DrawEliteMasq --> TurnScoring["Player Cards to Reputation<br/>Score Joy<br/>Community Score Joy"]
     
-    style Start fill:#f9f,stroke:#333,stroke-width:4px
-    style End fill:#f9f,stroke:#333,stroke-width:4px
-    style End2 fill:#f9f,stroke:#333,stroke-width:4px
-    style FoilThreat fill:#90EE90,stroke:#333,stroke-width:2px
-    style Expose fill:#FFA07A,stroke:#333,stroke-width:2px
-    style SB fill:#FFD700,stroke:#333,stroke-width:2px
-    style Chr fill:#87CEEB,stroke:#333,stroke-width:2px
-    style Dan fill:#DDA0DD,stroke:#333,stroke-width:2px
-    style QG fill:#F0E68C,stroke:#333,stroke-width:2px
+    TurnScoring --> NotWonDiscard["Cards Not Won Discarded<br/>Equals 2 to 3 cards"]
+    
+    NotWonDiscard --> DrawFromElite["Draw from Elite Masquerade<br/>for each card not included<br/>Look at 2, keep 1 Secret"]
+    
+    DrawFromElite --> SafeSite["SAFE RISQUE SITE<br/>Reveal All Cards in<br/>Safe Pile, May take Cubes"]
+    
+    SafeSite --> GenerateGossip["Generate Gossip<br/>Place cards Matching<br/>Suits in Safe Pile"]
+    
+    GenerateGossip --> ForEachCard["For Each Card<br/>Expose Holder"]
+    
+    ForEachCard --> FreePlayer{{"Free Player Project?"}}
+    ForEachCard --> RevealProject{{"Serving Project?"}}
+    
+    FreePlayer -->|Yes| NoEffect1["No Effect"]
+    FreePlayer -->|No| ExposeEffect1["Exposure Effects"]
+    
+    RevealProject -->|Yes| NoEffect2["No Effect"]
+    RevealProject -->|No| ExposeEffect2["Exposure Effects"]
+    
+    NoEffect1 --> MatchingSuits
+    ExposeEffect1 --> MatchingSuits
+    NoEffect2 --> MatchingSuits
+    ExposeEffect2 --> MatchingSuits
+    
+    MatchingSuits["Flip High to Low"]
+    
+    MatchingSuits --> InformerCaught["INFORMER CAUGHT<br/>Expose According to Leverage<br/>Matching cards in Safe Reveal<br/>Rep = Mollies + Desires"]
+    
+    InformerCaught --> ExposeImpact["EXPOSE ALL PLAYERS<br/>with matching suits<br/>to cards"]
+    
+    ExposeImpact --> MoveCards["Move Cards<br/>to Sites"]
+    
+    MoveCards --> MoreSites{{"More Sites<br/>on Board?"}}
+    
+    MoreSites -->|Yes| Start
+    MoreSites -->|No| RoundEnd["Round End"]
+    
+    RoundEnd --> RecoverBonus["Runner Bonus<br/>If in 4 Star Review"]
+    
+    RecoverBonus --> AnyComplete{{"All festivity or Joy done?"}}
+    
+    AnyComplete -->|Yes| EndRound["End of the Round"]
+    AnyComplete -->|No| Start
+    
+    %% Styling
+    classDef start fill:#fee08b,stroke:#333,stroke-width:2px
+    classDef decision fill:#fdae61,stroke:#333,stroke-width:2px
+    classDef action fill:#abd9e9,stroke:#333,stroke-width:2px
+    classDef threat fill:#d73027,stroke:#333,stroke-width:2px,color:#fff
+    classDef safe fill:#1a9850,stroke:#333,stroke-width:2px,color:#fff
+    classDef bonus fill:#542788,stroke:#333,stroke-width:2px,color:#fff
+    classDef gossip fill:#fd8d3c,stroke:#333,stroke-width:2px
+    
+    class Start,RoundEnd start
+    class RunnerPlay,PlayerChoice,FillSixCards,MorePlayers,Threat,FreePlayer,RevealProject,MoreSites,AnyComplete decision
+    class Players,Runner,PlayCards,SkipRunner,PlaceDesire,DrawCard,BackToRunner,TurnScoring,NotWonDiscard,DrawFromElite,MoveCards,RecoverBonus,EndRound action
+    class ThreatResolution threat
+    class SafeResolution,SafeSite safe
+    class Select4Best,Surprise,Christening,Dance,Quiet bonus
+    class GenerateGossip,ForEachCard,MatchingSuits,InformerCaught,ExposeImpact gossip

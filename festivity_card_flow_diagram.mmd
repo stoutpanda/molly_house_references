@@ -1,97 +1,99 @@
-flowchart TB
-    subgraph "CARD SOURCES"
-        R[Runner<br/>MUST play each round]
-        P1[Player 1<br/>Play or Pass]
-        P2[Player 2<br/>Play or Pass]
-        P3[Player 3<br/>Play or Pass]
-        COM[Community<br/>1 per round from deck]
+flowchart TD
+    %% Header
+    subgraph header["Turn Structure"]
+        direction LR
+        Runner["Runner<br/>MUST play each round"]
+        P1["Player 1<br/>Play or Pass"]
+        P2["Player 2<br/>Play or Pass"]
+        P3["Player 3<br/>Play or Pass"]
+        Community["Community<br/>1 per round from deck"]
     end
     
-    subgraph "CARDS PLAYED"
-        POOL[Card Pool<br/>All cards played during festivity]
+    %% Card Distribution
+    subgraph pool["Card Pool"]
+        AllCards["All cards played during<br/>festivity"]
     end
     
-    R -->|Plays card| POOL
-    P1 -->|Plays card| POOL
-    P2 -->|Plays card| POOL
-    P3 -->|Plays card| POOL
-    COM -->|Revealed| POOL
+    header --> pool
     
-    POOL --> SELECT{Select Best<br/>4 Cards}
+    %% Selection
+    pool --> SelectBest{{"Select Best<br/>4 Cards"}}
     
-    SELECT --> WIN[Winning Set<br/>4 cards]
-    SELECT --> REM[Remaining Cards<br/>Not selected]
+    %% Two Paths
+    SelectBest -->|Contains Threat?| ThreatPath
+    SelectBest -->|No Threat| WinningSet["Winning Set<br/>4 cards"]
     
-    subgraph "WINNING SET PROCESSING"
-        WIN --> TYPE{Card Type?}
+    %% Threat Path
+    subgraph ThreatPath["Threat Resolution"]
+        RemCards["Remaining Cards<br/>Not selected"]
         
-        TYPE -->|Player's Desire| REP1[To Player's<br/>Reputation]
-        TYPE -->|Player's Molly| REP2[To Player's<br/>Reputation]
-        TYPE -->|Player's Threat| FOIL[FOILED<br/>To Safe Pile]
-        TYPE -->|Community Desire| SAFE1[To Safe Pile]
-        TYPE -->|Community Molly| SAFE2[To Safe Pile]
-        TYPE -->|Community Threat| SAFE3[To Safe Pile]
+        RemCards --> RunnerGossip["Runner adds to Gossip<br/>One by one"]
         
-        REP1 --> SCORE1[Player Scores Joy<br/>Stars on card]
-        REP2 --> SCORE2[Player Scores 0<br/>But Molly Bonus possible]
-        FOIL --> PRIDE{Pride Rule?}
-        PRIDE -->|Yes| CUBE1[Take cubes and<br/>Rep cards to Safe]
-        PRIDE -->|No| CUBE2[Just threat to Safe]
+        RunnerGossip --> CheckThreat{{"Contains<br/>Threat?"}}
         
-        SAFE1 --> SCORE3[Community Scores<br/>Stars on card]
-        SAFE2 --> SCORE4[Community Scores<br/>4 Joy]
-        SAFE3 --> SCORE5[Community Scores<br/>0 Joy]
+        CheckThreat -->|Yes| EXPOSURE["EXPOSURE"]
+        CheckThreat -->|No| Continue
+        
+        EXPOSURE --> WhoseThreat{{"Whose Threat?"}}
+        
+        WhoseThreat -->|Player's| PlayerExposed["Player's<br/>That Player Exposed<br/>Loses matching rep"]
+        WhoseThreat -->|Community's| AllExposed["Community's<br/>ALL Players Exposed<br/>Lose matching rep"]
+        
+        PlayerExposed --> DrawCards["Players Draw Cards"]
+        AllExposed --> DrawCards
+        
+        Continue --> DrawCards
+        
+        DrawCards --> EliteMasq["Elite Masquerade Cards:<br/>1 per card not won"]
+        
+        EliteMasq --> ScoreBonuses["Score Bonuses"]
     end
     
-    subgraph "REMAINING CARDS PROCESSING"
-        REM --> GOSSIP[Runner adds to Gossip<br/>One by one]
-        GOSSIP --> CHECK{Contains<br/>Threat?}
-        CHECK -->|Yes| EXPOSE[EXPOSURE]
-        CHECK -->|No| DRAW[Players Draw Cards]
-        
-        EXPOSE --> WHO{Whose Threat?}
-        WHO -->|Player's| EXP1[That Player Exposed<br/>Loses matching rep]
-        WHO -->|Community's| EXP2[ALL Players Exposed<br/>Lose matching rep]
-        
-        EXP1 --> CUBES[Take Mandatory Cubes<br/>1 per card lost]
-        EXP2 --> CUBES
-        
-        DRAW --> D1[Each player draws 1<br/>per their card in gossip]
-    end
+    %% Winning Set Path
+    WinningSet --> CardType{{"Card Type?"}}
     
-    subgraph "BONUSES"
-        SCORE1 --> BONUS
-        SCORE2 --> BONUS
-        SCORE3 --> BONUS
-        SCORE4 --> BONUS
-        SCORE5 --> BONUS
-        CUBES --> BONUS
-        D1 --> BONUS
-        
-        BONUS[Score Bonuses]
-        BONUS --> RB{Runner Bonus}
-        BONUS --> CB{Community Bonus}
-        
-        RB -->|Good Festivity| RB1[Plus Joy = Rep at site]
-        RB -->|Quiet Gathering| RB2[-Joy = Rep at site]
-        
-        CB -->|Surprise Ball| CB1[Plus 3 Joy]
-        CB -->|Christening| CB2[Plus 2 Joy]
-        CB -->|Dance| CB3[Plus 1 Joy]
-        CB -->|Quiet Gathering| CB4[-1 Joy]
-    end
+    CardType -->|Player's Desire| PlayerDesire["Player's Desire<br/>To Player's<br/>Reputation"]
+    CardType -->|Player's Molly| PlayerMolly["Player's Molly<br/>To Player's<br/>Reputation"]
+    CardType -->|Community Desire| CommDesire["Community Desire<br/>To Safe Pile"]
+    CardType -->|Community Molly| CommMolly["Community Molly<br/>To Safe Pile"]
+    CardType -->|Community Threat| CommThreat["Community Threat<br/>To Safe Pile"]
+    CardType -->|Player's Threat| PlayerThreat["Player's Threat<br/>FOILED<br/>To Safe Pile"]
     
-    style R fill:#D4AF37,stroke:#8B1538,stroke-width:3px,color:#2F2F2F
-    style COM fill:#9370DB,stroke:#8B1538,stroke-width:2px,color:#fff
-    style WIN fill:#228B22,stroke:#2F2F2F,stroke-width:3px,color:#fff
-    style REM fill:#B22222,stroke:#2F2F2F,stroke-width:2px,color:#fff
-    style EXPOSE fill:#FF8C00,stroke:#B22222,stroke-width:3px,color:#fff
-    style FOIL fill:#90EE90,stroke:#228B22,stroke-width:2px,color:#2F2F2F
-    style CUBES fill:#FF6347,stroke:#B22222,stroke-width:2px,color:#fff
-    style SELECT fill:#FFE4D5,stroke:#8B1538,stroke-width:2px,color:#2F2F2F
-    style TYPE fill:#FFE4D5,stroke:#8B1538,stroke-width:2px,color:#2F2F2F
-    style CHECK fill:#FFE4D5,stroke:#8B1538,stroke-width:2px,color:#2F2F2F
-    style WHO fill:#FFE4D5,stroke:#8B1538,stroke-width:2px,color:#2F2F2F
-    style PRIDE fill:#FFE4D5,stroke:#8B1538,stroke-width:2px,color:#2F2F2F
-    style RB fill:#FFE4D5,stroke:#8B1538,stroke-width:2px,color:#2F2F2F
-    style CB fill:#FFE4D5,stroke:#8B1538,stroke-width:2px,color:#2F2F2F
+    PlayerDesire --> ScoreJoy["Player Scores Joy<br/>Stars on card"]
+    PlayerMolly --> MollyBonus["Player Scores 0<br/>but Molly Bonus possible"]
+    CommDesire --> CommScore["Community Scores<br/>Stars on card"]
+    CommMolly --> CommScore2["Community Scores<br/>4 Joy"]
+    CommThreat --> CommScore3["Community Scores<br/>0 Joy"]
+    PlayerThreat --> PrideRule{{"Pride Rule?"}}
+    
+    PrideRule -->|Yes| TakeCubes["Take cubes and<br/>Rep cards to Safe"]
+    PrideRule -->|No| JustThreat["Just threat to Safe"]
+    
+    %% Bottom Bonuses
+    ScoreJoy --> BonusPhase
+    MollyBonus --> BonusPhase
+    CommScore --> BonusPhase
+    CommScore2 --> BonusPhase
+    CommScore3 --> BonusPhase
+    TakeCubes --> BonusPhase
+    JustThreat --> BonusPhase
+    
+    subgraph BonusPhase["Score Bonuses"]
+        direction LR
+        RunnerBonus["Runner Bonus"]
+        CommunityBonus["Community Bonus"]
+        
+        RunnerBonus --> GoodFestivity["Good Festivity"]
+        RunnerBonus --> QuietGathering["Quiet Gathering"]
+        RunnerBonus --> SurpriseBall["Surprise Ball"]
+        RunnerBonus --> Christening["Christening"]
+        RunnerBonus --> Dance["Dance"]
+        RunnerBonus --> QuietGathering2["Quiet Gathering"]
+        
+        GoodFestivity --> Plus3Joy["Plus 3 Joy + Rep at site"]
+        QuietGathering --> JoyBen["Joy = Rep at site"]
+        SurpriseBall --> Plus4Joy["Plus 4 Joy"]
+        Christening --> Plus3Joy2["Plus 3 Joy"]
+        Dance --> Plus1Joy["Plus 1 Joy"]
+        QuietGathering2 --> Plus0Joy["Plus 0 Joy"]
+    end
