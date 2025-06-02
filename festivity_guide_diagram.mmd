@@ -96,4 +96,37 @@ flowchart TD
     RunnerBonus --> GoodFestivity["Good Festivity"]
     RunnerBonus --> QuietGathering["Quiet Gathering"]
     
-    Goo
+    GoodFestivity --> PlusJoyRep["Plus Joy = Rep at site"]
+    QuietGathering --> MinusJoyRep["Minus Joy = Rep at site"]
+    
+    %% Community Bonus Details
+    CommunityBonus --> SurpriseBall["Surprise Ball"]
+    CommunityBonus --> Christening["Christening"]
+    CommunityBonus --> Dance["Dance"]
+    CommunityBonus --> QuietGatheringComm["Quiet Gathering"]
+    
+    SurpriseBall --> Plus3Joy["Plus 3 Joy"]
+    Christening --> Plus2Joy["Plus 2 Joy"]
+    Dance --> Plus1Joy["Plus 1 Joy"]
+    QuietGatheringComm --> Minus1Joy["Minus 1 Joy"]
+    
+    %% Styling to match PNG
+    classDef purple fill:#9370DB,stroke:#4B0082,stroke-width:2px,color:#fff
+    classDef lightPurple fill:#E6E6FA,stroke:#4B0082,stroke-width:2px
+    classDef pink fill:#FFB6C1,stroke:#8B1538,stroke-width:2px
+    classDef orange fill:#FF8C00,stroke:#FF4500,stroke-width:3px,color:#fff
+    classDef green fill:#228B22,stroke:#006400,stroke-width:2px,color:#fff
+    classDef yellow fill:#FFD700,stroke:#B8860B,stroke-width:2px
+    classDef decision fill:#FFDAB9,stroke:#8B1538,stroke-width:2px
+    
+    class Runner,P1,P2,P3 purple
+    class Community lightPurple
+    class pool purple
+    class RemCards,left purple
+    class WinningSet,right green
+    class EXPOSURE orange
+    class PlayerExposed,AllExposed lightPurple
+    class PlayerThreat green
+    class SelectBest,CheckThreat,WhoseThreat,CardType,PrideRule decision
+    class ScoreBonuses yellow
+    class RunnerBonus,CommunityBonus yellow
